@@ -1,6 +1,22 @@
 import axios from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+// Determine API URL based on environment
+const getApiUrl = () => {
+  // If environment variable is set, use it (highest priority)
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL
+  }
+  
+  // In development mode (npm run dev), use localhost
+  if (import.meta.env.DEV || import.meta.env.MODE === 'development') {
+    return 'http://localhost:5000/api'
+  }
+  
+  // In production on Render (same domain), use relative path
+  return '/api'
+}
+
+const API_URL = getApiUrl()
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -144,4 +160,3 @@ export const api = {
     return response.data
   },
 }
-
